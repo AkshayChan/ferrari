@@ -1,0 +1,3 @@
+RulesToSuppress:
+  - id: F19
+    reason: F19 is ignored on this repo because KMS are only applied to repository artifacts and we are fine with no key rotation

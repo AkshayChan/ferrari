@@ -1,0 +1,25 @@
+version: '0.2'
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+      ruby: 2.6
+    commands:
+      - npm i
+      - npm install --save-dev --save-exact prettier
+      - npm i --save-dev @types/js-yaml
+      - gem install cfn-nag
+  pre_build:
+    commands:
+      - npm run prettier:check
+      #- npm run lint:check
+  build:
+    commands:
+      - npx cdk synth --asset-metadata false --version-reporting false --path-metadata false > template.yaml
+  post_build:
+    commands:
+      - cfn_nag_scan --input-path cdk.out/*.template.json --deny-list-path cfn-deny.yaml
+      - npx cdk-assets publish -p cdk.out/*.assets.json
+artifacts:
+  files:
+    - template.yaml
